@@ -3,15 +3,30 @@
 	<head>
 		<title>Prototipo</title>
 		<script>
-			function pedirCamilla(){
-				document.write("hola");
+			function countDown(secs,elem) {
+				var element = document.getElementById(elem);
+				element.innerHTML = "La camilla llegara en "+secs+" seconds";
+				if(secs < 1) {
+					clearTimeout(timer);
+					element.innerHTML = '<h2>La camilla ha llegado!</h2>';
+				}
+				secs--;
+				var timer = setTimeout('countDown('+secs+',"'+elem+'")',1000);
 			}
+			function imprimir(otra){
+				var elem = document.getElementById(otra);
+				elem.innerHTML = "Hay 7 camillas disponibles";
+			}
+
 		</script>
 	</head>
 	<body>
-		<a onclick ="pedirCamilla()"><button>Pedir camilla</a>
-		<p id=tiempo>tiempo<p>
-			<p>hola</p>
+		<div id="ver"></div>
+		<div id="status"></div>
+		<a onclick="countDown(120,'status');"><button>Pedir camilla</button></a>
+		<a onclick="imprimir('ver');"><button>Ver si hay camillas disponibles</button></a>
+		
+
 	</body>
 	
 </html>
