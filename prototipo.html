@@ -2,8 +2,51 @@
 <html>
 	<head>
 		<style>
-		.doc {background-color: lightblue;}
-		.cami {background-color: lightblue;}
+		.doc {background-image: url('https://electricdinamics.files.wordpress.com/2010/05/azul-electrico.jpg');
+			    width: 300px;
+    			    height: 500px;}
+		.cami {background-image: url('https://electricdinamics.files.wordpress.com/2010/05/azul-electrico.jpg');
+			    width: 300px;
+    			    height: 500px;}
+
+		.button {
+    			background-color: #088A85; 
+    			border: none;
+    			/*color: white;*/
+    			padding: 15px 32px;
+    			text-align: center;
+    			text-decoration: none;
+    			display: inline-block;
+    			font-size: 16px;
+			border-radius: 12px;
+			margin: 70px;
+		}
+
+		.button2 {
+    			background-color: #088A85; 
+    			border: none;
+    			/*color: white;*/
+    			padding: 15px 32px;
+    			text-align: center;
+    			text-decoration: none;
+    			display: inline-block;
+    			font-size: 16px;
+			border-radius: 12px;
+		}
+
+		.button3 {
+    			background-color: #088A85; 
+    			border: none;
+    			/*color: white;*/
+    			padding: 15px 32px;
+    			text-align: center;
+    			text-decoration: none;
+    			display: inline-block;
+    			font-size: 16px;
+			border-radius: 12px;
+			margin: 0px 51px;
+		}
+
 		</style>
 		<title>Prototipo</title>
 		<script>
@@ -64,9 +107,13 @@
 		<div class="doc">
 			<div id="ver">Hay 7 camillas disponibles</div>
 			<p><br></br></p>
+			<p><br></br></p>
+			<p><br></br></p>
+			<p><br></br></p>
 			<div id="status"></br></div>
 			<p><br></br></p>
-			<a onclick="countDown(120,'status'),cambiarDispo('verD');"><button>Pedir camilla</button></a>
+			<br></br>
+			<a class="button" onclick="countDown(120,'status'),cambiarDispo('verD');">Pedir camilla</a>
 		</div>		
 
 		<p><br></br></p>
@@ -75,12 +122,16 @@
 		
 		<p>App para Camilleros</p>
 		<div class="cami">
-		<a onclick="permitirTimer(),cambiarDisponible('verD'),disminuirCamillas();"><button>Mandar camilla</button></a>
+		<p><br></br></p>
+		<p><br></br></p>
 		<p><br></br></p>
 		<div id="verD">No hay pedidos</div>
 		<p><br></br></p>
-		<a onclick="aumentarCamillas();"><button>+</button></a>
-		<a onclick="disminuirCamillas();"><button>-</button></a>
+		<br></br>
+		<a class="button3" onclick="aumentarCamillas();">+</a>
+		<a class="button2" onclick="disminuirCamillas();">-</a>
+		<br></br>
+		<a class="button" onclick="permitirTimer(),cambiarDisponible('verD'),disminuirCamillas();">Mandar camilla</a>
 		</div>
 		
 
