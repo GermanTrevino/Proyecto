@@ -1,0 +1,291 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
+
+public class VentanaArduino extends JFrame implements SerialPortEventListener,WindowListener {
+	private SerialPort serialPort;
+	private static final String PORT_NAMES="COM5"; // Windows
+	private BufferedReader input;
+	private OutputStream output;
+
+	private static final int TIME_OUT = 2000;	/** Milliseconds to block while waiting for port open */
+	private static final int DATA_RATE = 9600;  /** Default bits per second for COM port. */
+	private double sentado;
+	private double parado;
+	public VentanaArduino(){
+		super("Programa Arduino");
+		this.initialize();
+		this.sentado=0;
+		this.parado=0;
+		this.addWindowListener(this);
+		JPanel panel=(JPanel) this.getContentPane();
+		JPanel panelDisplay = new JPanel();
+		JPanel panelData = new JPanel();
+		JPanel panelLabel = new JPanel();
+		JPanel panelC1 = new JPanel();			//sentado
+		JPanel panelC2 = new JPanel();			//parado
+		
+		JLabel f1 = new JLabel("Frecuencia actual:");
+		JLabel f2 = new JLabel("1000 Hz");
+		JLabel f3 = new JLabel("Nueva Frecuencia");
+		JLabel s = new JLabel("                           ");
+		JLabel s1 = new JLabel("                           ");
+		JLabel s2 = new JLabel("                           ");
+		JLabel s3 = new JLabel("                                           ");
+		JLabel t1 = new JLabel("Nuevo tiempo de tolerancia");
+		JLabel t2 = new JLabel("Tiempo de");
+		JLabel t3 = new JLabel("tolerancia actual:");
+		JLabel t4 = new JLabel("5 seg");
+		JLabel d1 = new JLabel("Tiempo activo   ");
+		JLabel d2 = new JLabel("Tiempo inactivo");
+		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		Font font1 = new Font(fonts[72],Font.PLAIN,20);
+		//Font font2 = new Font(fonts[204],Font.BOLD,15);
+		Font font2 = new Font(f1.getFont().getName(),Font.BOLD,15);
+		f1.setFont(font2);
+		f2.setFont(font1);
+		f3.setFont(font2);
+		s.setFont(new Font(fonts[32],Font.PLAIN,15));
+		t1.setFont(font2);
+		t2.setFont(font2);
+		t3.setFont(font2);
+		t4.setFont(font1);
+		d1.setFont(font2);
+		d2.setFont(font2);
+		
+		JTextField frecuencia = new JTextField(8);
+		frecuencia.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				f2.setText(frecuencia.getText()+ " Hz   ");
+				repaint();
+				try {
+					String resultado="";
+					for(int i=0; i<7-frecuencia.getText().length(); i++){
+						resultado+="0";
+					}
+					resultado+=frecuencia.getText();
+					output.write(resultado.getBytes());
+					System.out.println("Se envio "+resultado);
+				} catch (IOException e1) {
+					System.out.println(e1);
+					e1.printStackTrace();
+				}
+			}
+		});
+		JTextField tiempo = new JTextField(2);
+		tiempo.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				t4.setText(tiempo.getText()+" seg");
+				repaint();
+				try {
+					String resultado="";
+					if(tiempo.getText().length()==1){
+						resultado+="0";
+					}
+					resultado+=tiempo.getText()+"0"+"0"+"0"+"0"+"0";
+					output.write(resultado.getBytes());
+					System.out.println("Se envio "+resultado);
+				} catch (IOException e1) {
+					System.out.println(e1);	
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		panelDisplay.add(f1);
+		panelDisplay.add(f2);
+		panelDisplay.add(s1);
+		panelDisplay.add(s);
+		panelDisplay.add(s2);
+		panelDisplay.add(t2);
+		panelDisplay.add(t3);
+		panelDisplay.add(t4);
+		panelDisplay.setPreferredSize(new Dimension(150,300));
+		panel.add(panelDisplay,BorderLayout.WEST);
+		panelDisplay.setBackground(new Color(164, 201, 255));
+		
+		panelData.add(f3);
+		panelData.add(frecuencia);
+		panelData.add(t1);
+		panelData.add(tiempo);
+		panel.add(panelData,BorderLayout.SOUTH);
+		panelData.setBackground(new Color(88, 155, 255));
+		
+		panelC1.setPreferredSize(new Dimension (50,50));
+		panelC1.setBackground(new Color(0, 170, 178));
+		panelC2.setPreferredSize(new Dimension (50,50));
+		panelC2.setBackground(new Color(255, 127, 43));
+		
+		panelLabel.add(d1);
+		panelLabel.add(panelC1);
+		panelLabel.add(s3);
+		panelLabel.add(d2);
+		panelLabel.add(panelC2);
+		panelLabel.setPreferredSize(new Dimension(150,300));
+		panel.add(panelLabel, BorderLayout.EAST);
+		panelLabel.setBackground(new Color(164, 201, 255));
+		
+		this.setSize(500, 300);
+		panel.setBackground(new Color(164, 201, 255));
+		int pantallaX=(int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();				//Ancho
+		int pantallaY=(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();				//Largo
+		this.setLocation(((pantallaX-this.getWidth())/2), ((pantallaY-this.getHeight())/2));	//Centrar ventana
+		this.setVisible(true);
+	}
+	
+	public void initialize() {
+		CommPortIdentifier portId = null;
+		Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+		while (portEnum.hasMoreElements()) {
+			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+			if (currPortId.getName().equals(PORT_NAMES)) {
+				portId = currPortId;
+				break;
+			}
+		}
+		if (portId == null) {
+			System.out.println("Could not find COM port.");
+			return;
+		}
+
+		try {
+			// open serial port, and use class name for the appName.
+			serialPort = (SerialPort) portId.open(this.getClass().getName(),TIME_OUT);
+			// set port parameters
+			serialPort.setSerialPortParams(DATA_RATE,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
+			// open the streams
+			input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+			output = serialPort.getOutputStream();
+			// add event listeners
+			serialPort.addEventListener(this);
+			serialPort.notifyOnDataAvailable(true);
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+	}
+
+	/**
+	 * This should be called when you stop using the port.
+	 * This will prevent port locking on platforms like Linux.
+	 */
+	public synchronized void close() {
+		if (serialPort != null) {
+			serialPort.removeEventListener();
+			serialPort.close();
+		}
+	}
+	public int grados(){
+		if(this.parado!=0 || this.sentado!=0){
+			return (int)((this.parado/(this.sentado+this.parado))*360);
+		}else{
+			return 0;
+		}
+		
+	}
+	
+	public void paint(Graphics g){
+		super.paint(g);
+		g.setColor(new Color(0, 170, 178));
+		g.fillOval((this.getWidth()/2)-(this.getHeight()/3),(this.getHeight()/2)-(this.getHeight()/3), 2*this.getHeight()/3, 2*this.getHeight()/3);
+		g.setColor(new Color(255, 127, 43));
+		g.fillArc((this.getWidth()/2)-(this.getHeight()/3),(this.getHeight()/2)-(this.getHeight()/3),2*this.getHeight()/3,2*this.getHeight()/3,0,this.grados());
+	}
+	
+	public static void main(String[] args) {
+		VentanaArduino ventana=new VentanaArduino();
+	}
+
+	public synchronized void serialEvent(SerialPortEvent oEvent) {
+		if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+			try {
+				String inputLine=input.readLine();
+				//System.out.println("Lei de Arduino: "+inputLine);
+				if(inputLine.equals("1"))
+					this.sentado++;
+				else
+				{
+					this.parado++;
+				}
+				repaint();
+			} catch (IOException e) {
+				//System.err.println("error en serialEvent: "+e);
+			}
+		}
+		// Ignore all the other eventTypes, but you should consider the other ones.
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		try{
+			this.output.close();
+			this.input.close();
+			this.close();
+			System.exit(0);
+		}
+		catch(IOException ex){
+			System.out.println(ex);
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+}
