@@ -10,7 +10,7 @@
     			    height: 500px;}
 
 		.button {
-    			background-color: #088A85; 
+    			background-color: #44ACCF;
     			border: none;
     			/*color: white;*/
     			padding: 15px 32px;
@@ -20,10 +20,11 @@
     			font-size: 16px;
 			border-radius: 12px;
 			margin: 70px;
+			font-weight:bold;
 		}
 
 		.button2 {
-    			background-color: #088A85; 
+    			background-color: #44ACCF;
     			border: none;
     			/*color: white;*/
     			padding: 15px 32px;
@@ -32,10 +33,11 @@
     			display: inline-block;
     			font-size: 16px;
 			border-radius: 12px;
+			font-weight:bold;
 		}
 
 		.button3 {
-    			background-color: #088A85; 
+    			background-color: #44ACCF; 
     			border: none;
     			/*color: white;*/
     			padding: 15px 32px;
@@ -45,7 +47,33 @@
     			font-size: 16px;
 			border-radius: 12px;
 			margin: 0px 51px;
+			font-weight:bold;
 		}
+
+		#ver{
+			
+			
+			font-weight:bold;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		#verD{
+			
+			
+			font-weight:bold;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		#status{
+			
+			
+			font-weight:bold;
+			margin: 0 auto;
+			text-align: center;
+		}
+
 
 		</style>
 		<title>Prototipo</title>
@@ -105,12 +133,14 @@
 	<body>
 		<p>App para Doctores</p>
 		<div class="doc">
-			<div id="ver">Hay 7 camillas disponibles</div>
+			<div id="ver"><p class= "vet">Hay 7 camillas disponibles</p></div>
+			<p><br></br></p>
+
 			<p><br></br></p>
 			<p><br></br></p>
-			<p><br></br></p>
-			<p><br></br></p>
+			<p>
 			<div id="status"></br></div>
+			</p>
 			<p><br></br></p>
 			<br></br>
 			<a class="button" onclick="countDown(120,'status'),cambiarDispo('verD');">Pedir camilla</a>
@@ -123,9 +153,9 @@
 		<p>App para Camilleros</p>
 		<div class="cami">
 		<p><br></br></p>
+
 		<p><br></br></p>
-		<p><br></br></p>
-		<div id="verD">No hay pedidos</div>
+		<div id="verD"><p class="vet">No hay pedidos</p></div>
 		<p><br></br></p>
 		<br></br>
 		<a class="button3" onclick="aumentarCamillas();">+</a>
